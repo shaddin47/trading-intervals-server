@@ -1,0 +1,508 @@
+# market_groups.yaml
+# ──────────────────────────────────────────────────────────────────────────
+# Override configuration for Trading Intervals Monitor market group display rows.
+#
+# The base list of RouteGroupIDs and Names comes from the SQL query:
+#   SELECT ID, Name FROM RouteGroup WHERE Name NOT LIKE 'UNUSED%'
+#
+# This file supplies:
+#   - Multiple display rows per RouteGroupID (e.g. ICE UK / ICE ENDEX / ICE US
+#     all share RouteGroupID 5 but filter by different ExchangeKeysCSV)
+#   - TaskName aliases (semicolon-separated) for matching scheduled tasks
+#   - exchange_keys_csv: comma-separated exchange key filter
+#   - exchange_keys_from_viable_routes: use viable routes instead of fixed keys
+#   - ignore: hide this row from the Gantt display
+#   - comment: shown in tooltip on hover (per-group, all intervals)
+#
+# RouteGroupIDs not listed here get a single default row using the DB name.
+# ──────────────────────────────────────────────────────────────────────────
+
+overrides:
+
+  - route_group_id: 0
+    entries:
+      - name: Montreal
+        task_name: null
+
+  - route_group_id: 180
+    entries:
+      - name: CmeILink3 - Brokertec
+        task_name: "CMEiLink3;cme_ilink3"
+
+  - route_group_id: 5
+    entries:
+      - name: ICE UK
+        exchange_keys_csv: "27,509"
+        task_name: "ICE;iceuk"
+      - name: ICE ENDEX
+        exchange_keys_csv: "341"
+        task_name: "ICE;iceuk"
+      - name: ICE US
+        exchange_keys_csv: "99,134,90"
+        task_name: "ICENYBOT;iceny"
+      - name: ICE B
+        exchange_keys_csv: "518"
+        task_name: "ICEB"
+      - name: ICE SG
+        exchange_keys_csv: "230"
+        task_name: "ICESG"
+
+  - route_group_id: 9
+    entries:
+      - name: SGX
+        task_name: null
+
+  - route_group_id: 40
+    entries:
+      - name: JPMorgan
+        task_name: "JPM"
+
+  - route_group_id: 52
+    entries:
+      - name: HKFE
+        task_name: null
+
+  - route_group_id: 61
+    entries:
+      - name: EurexETI HF
+        task_name: "ETI;etinext"
+
+  - route_group_id: 62
+    entries:
+      - name: EurexETI LF
+        task_name: "ETI;etinext"
+      - name: EurexETI LF(EEX)
+        exchange_keys_csv: "126"
+        task_name: "ETI_EEX;etinext_eex"
+
+  - route_group_id: 63
+    entries:
+      - name: DGCX
+        task_name: "dgcx"
+
+  - route_group_id: 66
+    entries:
+      - name: NewEdgeExt
+        task_name: "NewEdge;newedge_ext;newedge-ext"
+
+  - route_group_id: 69
+    entries:
+      - name: Robbins
+        task_name: null
+
+  - route_group_id: 71
+    entries:
+      - name: TFX
+        task_name: null
+
+  - route_group_id: 77
+    entries:
+      - name: Markets Direct
+        task_name: "FD_MarketsDirect"
+
+  - route_group_id: 79
+    entries:
+      - name: NewEdgeGlobal Fidessa
+        task_name: "NewEdgeGlobal Fidessa;newedgeglobal"
+        exchange_keys_from_viable_routes: true
+
+  - route_group_id: 80
+    entries:
+      - name: Liquidity Book
+        exchange_keys_csv: "25,45,46"
+        task_name: "RealTick"
+      - name: Liquidity Book (Prime)
+        exchange_keys_csv: "25,45,46"
+        task_name: "RealTick Prime"
+      - name: Liquidity Book (PrimeQH)
+        exchange_keys_csv: "473"
+        task_name: "RealTick Prime"
+
+  - route_group_id: 87
+    entries:
+      - name: OANDA
+        task_name: null
+
+  - route_group_id: 90
+    entries:
+      - name: UBS Fix
+        task_name: "UBSFix;ubs"
+
+  - route_group_id: 91
+    entries:
+      - name: Nissan Century FX
+        task_name: "NewedgeNissanFX"
+
+  - route_group_id: 98
+    entries:
+      - name: Nomura
+        task_name: "NewedgeNomura"
+
+  - route_group_id: 99
+    entries:
+      - name: Drivewealth MD
+        task_name: "Drivewealth MD"
+
+  - route_group_id: 105
+    entries:
+      - name: Perfectna
+        task_name: "Newedge Perfectna"
+
+  - route_group_id: 106
+    entries:
+      - name: ASX FIX
+        task_name: "SFE"
+
+  - route_group_id: 107
+    entries:
+      - name: Gain
+        task_name: null
+        exchange_keys_from_viable_routes: true
+
+  - route_group_id: 108
+    entries:
+      - name: Lime
+        task_name: "limed"
+        exchange_keys_from_viable_routes: true
+
+  - route_group_id: 109
+    entries:
+      - name: Hyundai
+        task_name: "NewedgeHyundai"
+
+  - route_group_id: 110
+    entries:
+      - name: NEXT JGATE OSE
+        task_name: "OSE"
+
+  - route_group_id: 112
+    entries:
+      - name: DeutscheBank
+        task_name: null
+
+  - route_group_id: 119
+    entries:
+      - name: Capital Futures
+        task_name: "NewedgeCapital"
+
+  - route_group_id: 120
+    entries:
+      - name: Connamara
+        task_name: "Newedge Connamara"
+
+  - route_group_id: 121
+    entries:
+      - name: APEX
+        task_name: "APEX"
+
+  - route_group_id: 124
+    entries:
+      - name: LimeAlgo
+        task_name: "NewedgeLimeAlgo"
+        exchange_keys_from_viable_routes: true
+
+  - route_group_id: 125
+    entries:
+      - name: QBAlgo
+        task_name: "Newedge QBAlgo"
+        exchange_keys_from_viable_routes: true
+
+  - route_group_id: 128
+    entries:
+      - name: CTPINE
+        task_name: null
+
+  - route_group_id: 130
+    entries:
+      - name: CFE
+        task_name: "CFEBats;cfe_bats"
+
+  - route_group_id: 132
+    entries:
+      - name: RCMAlgo CME
+        exchange_keys_csv: "3,4,84,85,96,500"
+        task_name: "NewEdgeRCMAlgo CME"
+      - name: RCMAlgo ICECFE
+        exchange_keys_csv: "15,27,53,99,509,518"
+        task_name: "NewedgeRCMAlgo ICECFE"
+      - name: RCMAlgo EU
+        exchange_keys_csv: "113,510,511,512,514,518,519,520"
+        task_name: "RCM Algo EU"
+      - name: RCMAlgo Eurex
+        exchange_keys_csv: "28,126,217"
+        task_name: "RCM Algo Eurex"
+
+  - route_group_id: 136
+    entries:
+      - name: Fenics
+        task_name: "Fenics"
+
+  - route_group_id: 138
+    entries:
+      - name: Nodal HF
+        task_name: "Nodal"
+
+  - route_group_id: 139
+    entries:
+      - name: Nodal LF
+        task_name: "Nodal"
+
+  - route_group_id: 141
+    entries:
+      - name: CTP
+        task_name: null
+
+  - route_group_id: 145
+    entries:
+      - name: NFI
+        task_name: "NFI"
+
+  - route_group_id: 147
+    entries:
+      - name: ErisDigital
+        task_name: null
+
+  - route_group_id: 149
+    entries:
+      - name: SG Algo(NewEdgeGlobal)
+        task_name: "NewedgeGlobalSGALGO;sgalgo"
+        exchange_keys_from_viable_routes: true
+
+  - route_group_id: 150
+    entries:
+      - name: TurkDexPhillip
+        task_name: "TurkDexPhillip"
+
+  - route_group_id: 152
+    entries:
+      - name: FlexTrade
+        task_name: "FlexTrade"
+
+  - route_group_id: 159
+    entries:
+      - name: SaxoDirect
+        task_name: "SaxoDirect;saxo"
+
+  - route_group_id: 164
+    entries:
+      - name: NYFIX
+        task_name: "Newedge NYFIX"
+
+  - route_group_id: 165
+    entries:
+      - name: EuronextOptiq
+        task_name: "EuronextOptiq"
+
+  - route_group_id: 166
+    entries:
+      - name: Bitnomial
+        task_name: "Newedge Bitnomial"
+
+  - route_group_id: 167
+    entries:
+      - name: Small Exchange
+        task_name: "Small Exchange"
+
+  - route_group_id: 168
+    entries:
+      - name: PhillipHNX
+        task_name: "HNX"
+
+  - route_group_id: 169
+    entries:
+      - name: Nasdaq Nordic
+        task_name: "NasdaqNordic;nasdaq_nordic"
+
+  - route_group_id: 170
+    entries:
+      - name: BNP
+        task_name: "BNP;bnpp"
+        exchange_keys_from_viable_routes: true
+
+  - route_group_id: 171
+    entries:
+      - name: Morgan Stanley
+        task_name: "Morgan Stanley;morganstanley"
+
+  - route_group_id: 173
+    entries:
+      - name: OAK
+        task_name: "Oak"
+
+  - route_group_id: 182
+    entries:
+      - name: Nasdaq Nordic Wholesale
+        task_name: "NasdaqNordicWholesale;nasdaq_nordic_wholesale"
+
+  - route_group_id: 185
+    entries:
+      - name: Liquidity Edge
+        task_name: "LiquidityEdge;liquidity_edge"
+
+  - route_group_id: 193
+    entries:
+      - name: Nasdaq Nordic Derivatives
+        task_name: "NND"
+
+  - route_group_id: 200
+    entries:
+      - name: Coinbase Derivatives/FairX
+        task_name: "FairX;coinbase-derivatives"
+
+  - route_group_id: 211
+    entries:
+      - name: B3
+        task_name: "B3"
+
+  - route_group_id: 214
+    entries:
+      - name: TFEX
+        task_name: "TFEX"
+
+  - route_group_id: 221
+    entries:
+      - name: TM2
+        task_name: "TM2"
+
+  - route_group_id: 231
+    entries:
+      - name: Citi
+        task_name: "Citi"
+
+  - route_group_id: 232
+    entries:
+      - name: KGIHNX
+        task_name: "HNX"
+
+  - route_group_id: 234
+    entries:
+      - name: Abaxx
+        task_name: "Abaxx"
+
+  - route_group_id: 239
+    entries:
+      - name: SGX GIFT Connect
+        task_name: "SGX GIFT;sgx_gift;sgx-gift"
+
+  - route_group_id: 245
+    entries:
+      - name: eSunny CTP
+        exchange_keys_csv: "134,251,111"
+        task_name: "eSunny_CTP"
+      - name: eSunny HKFE
+        exchange_keys_csv: "72"
+        task_name: "eSunny_HKFE"
+      - name: eSunny HNX
+        exchange_keys_csv: "276"
+        task_name: "eSunny_HNX"
+
+  - route_group_id: 253
+    entries:
+      - name: Galaxy Etana
+        task_name: "Galaxy Digital"
+
+  - route_group_id: 258
+    entries:
+      - name: TradeStation
+        task_name: "TradeStation;trade_station"
+
+  - route_group_id: 259
+    entries:
+      - name: FMX
+        task_name: null
+
+  - route_group_id: 260
+    entries:
+      - name: Remington
+        task_name: "NewedgeRemington"
+
+  - route_group_id: 264
+    entries:
+      - name: Broadridge/ABN Itiviti
+        task_name: "ABN Itiviti;abn_itiviti;abn-itiviti;broadridge"
+
+  - route_group_id: 278
+    entries:
+      - name: BrokerTecFix
+        task_name: "BrokerTecFix"
+
+  - route_group_id: 279
+    entries:
+      - name: TRAFiX
+        task_name: "trafix"
+      - name: TRAFiX Options
+        task_name: "trafix-options"
+
+  - route_group_id: 283
+    entries:
+      - name: GFO-X
+        task_name: "GFO-X"
+
+  - route_group_id: 293
+    entries:
+      - name: AMP Global
+        task_name: "AMP Global"
+
+  - route_group_id: 296
+    entries:
+      - name: CmeILink3Derivatives
+        exchange_keys_csv: "3,4,71,84,85,96,108,129,224,403,404,405,406,407,500,562,563"
+        task_name: "cme3"
+      - name: CmeILink3Derivatives 24x7
+        exchange_keys_csv: "587,4013"
+        task_name: "msgw247_cme3"
+
+  - route_group_id: 299
+    entries:
+      - name: Samsung
+        task_name: "Samsung"
+
+  - route_group_id: 300
+    entries:
+      - name: LMEFix
+        task_name: null
+
+  - route_group_id: 319
+    entries:
+      - name: CBOE CEDX
+        task_name: "cboe-cedx;cedx"
+
+  - route_group_id: 321
+    entries:
+      - name: ClearPort
+        task_name: null
+
+  - route_group_id: 325
+    entries:
+      - name: CitadelSecurities
+        task_name: "citadelsec"
+
+  - route_group_id: 329
+    entries:
+      - name: PNT
+        task_name: "Realtick PNT"
+
+  - route_group_id: 347
+    entries:
+      - name: BungeFidessa
+        task_name: "BungeFidessa"
+
+  - route_group_id: 359
+    entries:
+      - name: Norexeco
+        task_name: "Norexeco"
+
+  - route_group_id: 365
+    entries:
+      - name: BlockFills
+        task_name: "Newedge BlockFills"
+
+  - route_group_id: 374
+    entries:
+      - name: MIAX
+        task_name: null
+
+  - route_group_id: 381
+    entries:
+      - name: Prime Equities
+        task_name: "RealTick Prime"

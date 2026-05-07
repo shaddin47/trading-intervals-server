@@ -1,0 +1,41 @@
+[Unit]
+Description=Trading Intervals Monitor — FastAPI backend
+Documentation=https://github.com/cqginc/trading-intervals
+After=network.target network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=trading-intervals
+Group=trading-intervals
+WorkingDirectory=/usr/local/trading-intervals-server
+
+# Load secrets and config from .env — never store credentials here
+EnvironmentFile=/usr/local/trading-intervals-server/.env
+
+# Start the FastAPI backend on port 3000 (Apache proxies /time-tracker-server/ here)
+ExecStart=/usr/local/trading-intervals-server/.venv/bin/uvicorn backend.main:app \
+    --host 127.0.0.1 \
+    --port 3000 \
+    --workers 1 \
+    --log-level info \
+    --access-log
+
+Restart=on-failure
+RestartSec=10
+TimeoutStartSec=60
+TimeoutStopSec=30
+
+# Hardening
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=full
+ReadWritePaths=/usr/local/trading-intervals-server/cache
+
+# Logging via journald
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=trading-intervals
+
+[Install]
+WantedBy=multi-user.target

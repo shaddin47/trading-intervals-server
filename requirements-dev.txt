@@ -1,0 +1,13 @@
+# Trading Intervals Monitor — development & test dependencies
+# Install alongside runtime deps:  pip install -r requirements-dev.txt
+
+# Runtime deps (include all of them)
+-r requirements.txt
+
+# Testing
+pytest>=8.2.0
+pytest-asyncio>=0.23.0
+httpx>=0.27.0          # async test client for FastAPI
+
+# Linting / formatting
+ruff>=0.4.0

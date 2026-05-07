@@ -1,0 +1,45 @@
+# Trading Intervals Monitor — runtime dependencies
+#
+# Setup:
+#   python -m venv .venv
+#   source .venv/bin/activate        # Linux / macOS
+#   .venv\Scripts\activate           # Windows
+#   pip install -r requirements.txt
+
+# Web framework
+fastapi>=0.111.0
+uvicorn[standard]>=0.29.0
+
+# SQL Server connectivity
+# Requires the Microsoft ODBC Driver 18 for SQL Server on the host OS:
+#
+#   Linux (Debian/Ubuntu):
+#     https://learn.microsoft.com/sql/connect/odbc/linux-mac/installing-the-microsoft-odbc-driver-for-sql-server
+#     sudo ACCEPT_EULA=Y apt-get install -y msodbcsql18
+#
+#   Windows:
+#     Download and run the MSI installer from:
+#     https://learn.microsoft.com/sql/connect/odbc/download-odbc-driver-for-sql-server
+#     The driver registers as "ODBC Driver 18 for SQL Server" (same name as Linux).
+#
+pyodbc>=5.1.0
+
+# Settings / validation
+pydantic>=2.7.0
+pydantic-settings>=2.3.0
+
+# Background scheduling
+APScheduler>=3.10.4
+
+# Timezone / date handling
+pytz>=2024.1
+python-dateutil>=2.9.0
+
+# YAML (legacy migration helper only)
+pyyaml>=6.0.1
+
+# Cron expression parsing (Linux messenger tasks)
+croniter>=2.0.5
+
+# GitLab API (Linux cron inventory)
+python-gitlab>=4.5.0
