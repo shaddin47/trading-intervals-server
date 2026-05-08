@@ -64,6 +64,18 @@ sudo -u trading-intervals mkdir -p /usr/local/trading-intervals-server/cache/{pr
 
 ---
 
+## Frontend document root setup
+
+Create the directory Apache will serve from and set ownership once:
+
+```bash
+sudo mkdir -p /usr/local/trading-intervals
+sudo chown -R apache:apache /usr/local/trading-intervals
+sudo chmod -R 755 /usr/local/trading-intervals
+```
+
+---
+
 ## Frontend build & deploy
 
 Build on your dev machine (or CI) and copy the dist folder to the server:
@@ -76,6 +88,9 @@ npm run build          # outputs to frontend/dist/
 
 # Copy built files to server
 rsync -av --delete frontend/dist/ user@server:/usr/local/trading-intervals/
+
+# Set ownership so Apache can serve the files
+ssh user@server "sudo chown -R apache:apache /usr/local/trading-intervals && sudo chmod -R 755 /usr/local/trading-intervals"  
 ```
 
 Or build directly on the server:
@@ -89,6 +104,7 @@ sudo -u trading-intervals bash -c "
 sudo rsync -av --delete \
     /usr/local/trading-intervals-server/frontend/dist/ \
     /usr/local/trading-intervals/
+# Apache (user: apache) must own the files to serve them
 sudo chown -R apache:apache /usr/local/trading-intervals
 sudo chmod -R 755 /usr/local/trading-intervals
 ```
@@ -163,6 +179,8 @@ sudo -u trading-intervals bash -c "
 sudo rsync -av --delete \
     /usr/local/trading-intervals-server/frontend/dist/ \
     /usr/local/trading-intervals/
+sudo chown -R apache:apache /usr/local/trading-intervals
+sudo chmod -R 755 /usr/local/trading-intervals
 
 # Restart backend
 sudo systemctl restart trading-intervals
