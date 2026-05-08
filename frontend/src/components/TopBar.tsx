@@ -1,5 +1,4 @@
-import React from 'react'
-import type { Env, TzMode, ConflictFilter, Theme } from '@/types'
+import type { Env, TzMode, ConflictFilter } from '@/types'
 import { SORT_OPTIONS } from '@/utils/sort'
 import type { ScrollAnchor } from '@/types'
 import { useApp } from '@/hooks/useApp'

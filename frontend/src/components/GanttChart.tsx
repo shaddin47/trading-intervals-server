@@ -1,7 +1,7 @@
 import React, { useRef, useEffect, useCallback, useState, useMemo } from 'react'
 import type { MarketGroup, TzMode, ScrollAnchor } from '@/types'
 import {
-  DAY_LABELS, DAY_MS, HOUR_MS, DISPLAY_DAYS,
+  DAY_MS, HOUR_MS, DISPLAY_DAYS,
   msToPixel, formatTime, dayStartMs, dayLabel,
   computeDayPx, computeTotalPx, setRenderDayPx, FALLBACK_DAY_PX,
   tzOffsetMs, localTodayStartMs,
@@ -97,7 +97,7 @@ export function GanttChart({ groups, tz, loading, scrollAnchor }: Props) {
 
   // Tick every 60 s — advances the now-line and re-pins the viewport
   // to keep the now-line at NOW_INSET px when anchor is 'now'.
-  const [tick, setTick] = useState(0)
+  const [_tick, setTick] = useState(0)
   useEffect(() => {
     const id = setInterval(() => {
       setTick(n => n + 1)

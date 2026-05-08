@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { useApp } from '@/hooks/useApp'
 import { triggerRefreshAndWait } from '@/utils/api'
 

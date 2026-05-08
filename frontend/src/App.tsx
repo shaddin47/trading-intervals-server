@@ -1,4 +1,3 @@
-import React from 'react'
 import { BrowserRouter, Routes, Route, NavLink } from 'react-router-dom'
 import { AppProvider } from '@/hooks/useApp'
 import { GanttPage } from '@/pages/GanttPage'

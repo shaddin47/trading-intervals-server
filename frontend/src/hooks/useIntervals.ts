@@ -1,6 +1,5 @@
 import { useState, useEffect, useCallback } from 'react'
-import type { MarketGroup, ConflictFilter } from '@/types'
-import type { SortKey, SortDir } from '@/utils/sort'
+import type { MarketGroup } from '@/types'
 import { fetchIntervals } from '@/utils/api'
 import { sortMarketGroups } from '@/utils/sort'
 import { useApp } from './useApp'

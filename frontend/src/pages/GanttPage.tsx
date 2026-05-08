@@ -1,4 +1,3 @@
-import React from 'react'
 import { TopBar } from '@/components/TopBar'
 import { GanttChart } from '@/components/GanttChart'
 import { StatusBanner } from '@/components/StatusBanner'

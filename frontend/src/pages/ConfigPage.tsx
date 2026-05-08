@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import type { MarketGroupConfig } from '@/types'
 import { fetchConfigs, patchConfig, deleteConfig, upsertConfig } from '@/utils/api'
 import { useApp } from '@/hooks/useApp'
