@@ -74,18 +74,32 @@ export function GanttChart({ groups, tz, loading, scrollAnchor }: Props) {
   }, [])
 
   useEffect(() => {
-    measure()
-    const t1 = setTimeout(measure, 0)
-    // After layout settles, scroll to the correct anchor position.
-    const t2 = setTimeout(() => {
+    let rafId = requestAnimationFrame(() => {
       measure()
-      scrollToAnchor(scrollAnchorRef.current)
-    }, 200)
+      rafId = requestAnimationFrame(() => {
+        measure()
+        scrollToAnchor(scrollAnchorRef.current)
+      })
+    })
     const ro = new ResizeObserver(measure)
     if (wrapperRef.current) ro.observe(wrapperRef.current)
     window.addEventListener('resize', measure)
-    return () => { clearTimeout(t1); clearTimeout(t2); ro.disconnect(); window.removeEventListener('resize', measure) }
+    return () => { cancelAnimationFrame(rafId); ro.disconnect(); window.removeEventListener('resize', measure) }
   }, [measure, scrollToAnchor])
+
+  // Re-measure when data arrives — on first load groups is empty so wrapperRef
+  // may not be mounted yet; this fires once groups populate.
+  useEffect(() => {
+    if (groups.length > 0) {
+      requestAnimationFrame(() => {
+        measure()
+        requestAnimationFrame(() => {
+          measure()
+          scrollToAnchor(scrollAnchorRef.current)
+        })
+      })
+    }
+  }, [groups.length, measure, scrollToAnchor])
 
   // Re-scroll when anchor or data changes (not tz — tz never moves the chart).
   useEffect(() => {
@@ -131,9 +145,26 @@ export function GanttChart({ groups, tz, loading, scrollAnchor }: Props) {
   const totalPx = computeTotalPx(dayPx)
 
   // Computed after setRenderDayPx so _dayPx is always the current measured value.
-  // tick and tz are read via closure so these update on every tick/tz change.
-  const nowPx       = msToPixel(Date.now())
+  const nowPx        = msToPixel(Date.now())
   const todayStartPx = msToPixel(localTodayStartMs(tz))
+
+  // Weekend bands — tz-aware Sat/Sun columns rendered as shaded overlays.
+  // A "day" here is defined by the local midnight in the selected tz.
+  // Weekend bands — the display window is always Sunday-anchored UTC, so
+  // d % 7 === 6 is always Saturday and d % 7 === 0 (and d > 0) is always Sunday.
+  // We shade the pixel span from local Saturday midnight to local Sunday midnight
+  // (i.e. the full local Saturday), then from local Sunday midnight to Monday midnight
+  // (i.e. the full local Sunday). The tzOff shift moves these in lock-step with the
+  // day headers so they always cover exactly Sat 00:00 → Mon 00:00 local time.
+  const weekendBands: { leftPx: number; widthPx: number }[] = []
+  for (let d = 0; d < DISPLAY_DAYS; d++) {
+    const utcDow = d % 7   // 0=Sun,1=Mon,...,6=Sat (window starts on UTC Sunday)
+    if (utcDow !== 6 && utcDow !== 0) continue  // only Sat and Sun
+    if (utcDow === 0 && d === 0) continue        // skip the very first Sunday (before visible Sat)
+    const columnMs = dayStartMs(d) - tzOff       // local midnight of this day
+    const leftPx   = msToPixel(columnMs)
+    weekendBands.push({ leftPx, widthPx: dayPx })
+  }
 
   // Flatten rows
   type Row =
@@ -231,10 +262,11 @@ export function GanttChart({ groups, tz, loading, scrollAnchor }: Props) {
           {/* ── Data rows ── */}
           {rows.map((row, i) => {
             const isIgnored    = row.kind === 'intervals' && row.mg.ignored
-            const isGroupStart = row.kind === 'intervals' && i > 0
-            const isLastInGroup = i < rows.length - 1 && rows[i + 1].kind === 'intervals'
+            // Count which group index this row belongs to for alternating shade
+            const groupIdx     = groups.indexOf(row.mg)
+            const isEvenGroup  = groupIdx % 2 === 0
             return (
-              <div key={i} className={`gantt-row${isGroupStart ? ' group-start' : ''}`} style={{ display: 'flex', height: ROW_H, borderBottom: isLastInGroup ? 'none' : '1px solid var(--border)' }}>
+              <div key={i} style={{ display: 'flex', height: ROW_H }}>
 
                 {/* Label — sticky left */}
                 <div
@@ -244,7 +276,7 @@ export function GanttChart({ groups, tz, loading, scrollAnchor }: Props) {
                     position: 'sticky', left: 0, zIndex: 4,
                     height: ROW_H, borderBottom: 'none',
                     borderRight: '1px solid var(--border)',
-                    background: isIgnored ? 'var(--ignored)' : 'var(--bg-2)',
+                    background: isIgnored ? 'var(--ignored)' : isEvenGroup ? 'var(--bg-2)' : 'var(--bg-label-alt)',
                   }}
                 >
                   {row.kind === 'intervals' ? (
@@ -264,17 +296,23 @@ export function GanttChart({ groups, tz, loading, scrollAnchor }: Props) {
 
                 {/* Timeline cell — day banding via CSS custom properties + gradient */}
                 <div
-                  className={`gantt-timeline-cell ${isIgnored ? 'is-ignored' : ''}`}
+                  className={`gantt-timeline-cell ${isIgnored ? 'is-ignored' : ''} ${isEvenGroup ? 'group-even' : 'group-odd'}`}
                   style={{
                     width: totalPx, flexShrink: 0,
                     position: 'relative', height: ROW_H,
                     borderBottom: 'none', overflow: 'visible',
-                    // CSS vars drive the repeating-gradient in index.css
-                    '--day-px': `${dayPx}px`,
                     '--today-offset': `${todayStartPx}px`,
+                    '--day-px': `${dayPx}px`,
                   } as React.CSSProperties}
                 >
-                  {/* Day bands rendered via inline CSS gradient — zero DOM nodes */}
+                  {/* Weekend shading — tz-aware Sat/Sun columns */}
+                  {weekendBands.map(({ leftPx, widthPx }, wi) => (
+                    <div key={wi} style={{
+                      position: 'absolute', top: 0, bottom: 0,
+                      left: leftPx, width: widthPx,
+                      background: 'var(--weekend-band)', pointerEvents: 'none',
+                    }} />
+                  ))}
                   {gridLines.map(({ ms, isDay }) => (
                     <div key={ms} className={isDay ? 'day-line' : 'hour-line'} style={{ left: msToPixel(ms) }} />
                   ))}
