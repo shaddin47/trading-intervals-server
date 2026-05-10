@@ -48,6 +48,10 @@ def load_market_groups(env: Optional[str] = None) -> list[MarketGroupOverride]:
     """
     Return the full display-row list for the given environment.
     env defaults to settings.app_env.
+
+    Any route group present in SQL Server but absent from SQLite is
+    automatically inserted with default values so it appears in the
+    config UI and picks up task-name aliases on the next refresh.
     """
     if env is None:
         env = settings.app_env
@@ -59,6 +63,25 @@ def load_market_groups(env: Optional[str] = None) -> list[MarketGroupOverride]:
     by_id: dict[int, list[dict]] = {}
     for row in overrides:
         by_id.setdefault(row["route_group_id"], []).append(row)
+
+    # Auto-seed any route groups missing from SQLite.
+    # INSERT OR IGNORE means existing rows are never touched.
+    missing = [
+        (env, rgid, name)
+        for rgid, name in db_groups.items()
+        if rgid not in by_id
+    ]
+    if missing:
+        config_db.seed_missing_groups(missing)
+        logger.info(
+            "Auto-seeded %d missing route group(s) into config DB for env=%s",
+            len(missing), env,
+        )
+        # Reload so the rest of this function sees the new rows
+        overrides = config_db.get_all_overrides(env)
+        by_id = {}
+        for row in overrides:
+            by_id.setdefault(row["route_group_id"], []).append(row)
 
     result: list[MarketGroupOverride] = []
     for rgid, db_name in db_groups.items():

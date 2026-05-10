@@ -167,6 +167,23 @@ def delete_override(env: str, route_group_id: int, name: str) -> None:
 # One-time YAML migration helper
 # ---------------------------------------------------------------------------
 
+def seed_missing_groups(rows: list[tuple[str, int, str]]) -> None:
+    """
+    Insert (env, route_group_id, name) rows that don't yet exist in SQLite.
+    All other columns are left as their DEFAULT values (nulls / 0).
+    Uses INSERT OR IGNORE so existing rows are never modified.
+
+    rows: list of (env, route_group_id, name)
+    """
+    with _conn() as con:
+        con.executemany(
+            """INSERT OR IGNORE INTO market_group_config
+               (env, route_group_id, name)
+               VALUES (?, ?, ?)""",
+            rows,
+        )
+
+
 def bulk_seed_from_yaml(yaml_path: str, env: str = "prod") -> int:
     """
     Seed the DB from the legacy market_groups.yaml.
