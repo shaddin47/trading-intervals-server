@@ -224,7 +224,6 @@ export function GanttChart({ groups, tz, loading, scrollAnchor }: Props) {
               position: 'relative',
               background: 'var(--bg-2)',
               borderBottom: '1px solid var(--border)',
-              overflow: 'hidden',
               flexShrink: 0,
             }}>
               {Array.from({ length: DISPLAY_DAYS }, (_, d) => {

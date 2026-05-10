@@ -9,7 +9,7 @@
   --bg-4:         #222730;
   --bg-band:      rgba(255,255,255,0.025);   /* alternating day band */
   --weekend-band: rgba(255,255,255,0.04);    /* Sat/Sun column shade */
-  --group-alt:    rgba(255,255,255,0.05);   /* alternating group row shade */
+  --group-alt:    rgba(255,255,255,0.05);    /* alternating group row shade */
   --bg-label-alt: #1e2230;                   /* odd-group label column bg */
   --border:       #2a2f38;
   --border-hi:    #3d4452;
@@ -203,16 +203,18 @@ body {
 /* ── Day header ─────────────────────────────────────────────────────────── */
 .day-header {
   position: absolute; top: 0; bottom: 0;
-  display: flex; flex-direction: column; justify-content: flex-end;
-  padding-bottom: 5px;
+  display: flex; flex-direction: column; justify-content: space-between;
+  padding: 4px 0 3px;
   border-left: 1px solid var(--border);
+  overflow: visible;
 }
 .day-header .day-name {
   font-family: 'IBM Plex Mono', monospace; font-size: 10px;
   color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.06em;
   padding-left: 6px;
+  flex-shrink: 0;
 }
-.hour-ticks { display: flex; position: absolute; bottom: 0; left: 0; right: 0; height: 14px; }
+.hour-ticks { display: flex; flex-shrink: 0; position: relative; height: 14px; }
 .hour-tick {
   position: absolute; bottom: 0;
   font-family: 'IBM Plex Mono', monospace; font-size: 9px; color: var(--text-xdim);
