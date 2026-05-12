@@ -1,12 +1,15 @@
 import {
-  createContext, useContext, useState, useEffect, useCallback,
-  type ReactNode,
+  createContext, useCallback, useContext, useEffect, useRef, useState,
 } from 'react'
-import type { Env, TzMode, Theme, ConflictFilter, ScrollAnchor } from '@/types'
+import type { ReactNode } from 'react'
+import type {
+  ConflictFilter, Env, MarketGroup, ScrollAnchor,
+  StatusInfo, Theme, TzMode,
+} from '@/types'
 import type { SortKey, SortDir } from '@/utils/sort'
-import type { StatusInfo } from '@/types'
-import { fetchStatus } from '@/utils/api'
-import { loadPrefs, savePrefs, type Prefs } from '@/utils/prefs'
+import { fetchStatus, fetchIntervals } from '@/utils/api'
+import { loadPrefs, savePrefs } from '@/utils/prefs'
+import type { Prefs } from '@/utils/prefs'
 
 interface AppCtx {
   env:               Env
@@ -25,12 +28,17 @@ interface AppCtx {
   setSortDir:        (d: SortDir) => void
   status:            StatusInfo[]
   refreshStatus:     () => void
+  // Intervals data — lifted here so it persists across page navigation
+  // and so ConfigPage can patch comments without a full reload.
+  raw:               MarketGroup[]
+  intervalsLoading:  boolean
+  loadIntervals:     () => void
+  patchGroupComment: (routeGroupId: number, name: string, comment: string | null) => void
 }
 
 const Ctx = createContext<AppCtx | null>(null)
 
 export function AppProvider({ children }: { children: ReactNode }) {
-  // Load once from cookie — not reactive, intentional
   const initial = loadPrefs()
 
   const [env,            setEnvState]            = useState<Env>(initial.env)
@@ -41,15 +49,18 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [sortKey,        setSortKeyState]        = useState<SortKey>(initial.sortKey)
   const [sortDir,        setSortDirState]        = useState<SortDir>(initial.sortDir)
   const [status,         setStatus]              = useState<StatusInfo[]>([])
+  const [raw,            setRaw]                 = useState<MarketGroup[]>([])
+  const [intervalsLoading, setIntervalsLoading]  = useState(false)
 
-  // Apply theme to <html> element
+  // Keep a ref to env so loadIntervals always uses the current value
+  // without being recreated on every env change (which would re-trigger effects).
+  const envRef = useRef(env)
+  envRef.current = env
+
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', theme)
   }, [theme])
 
-  // Save the full prefs object whenever any preference changes.
-  // Using a single useEffect avoids the N separate cookie writes that N
-  // individual setters would cause, and removes the need for patchPrefs.
   useEffect(() => {
     const prefs: Prefs = {
       env, tz, theme, scrollAnchor, conflictFilter, sortKey, sortDir,
@@ -57,7 +68,6 @@ export function AppProvider({ children }: { children: ReactNode }) {
     savePrefs(prefs)
   }, [env, tz, theme, scrollAnchor, conflictFilter, sortKey, sortDir])
 
-  // Wrap setters in useCallback so consumers don't re-render needlessly
   const setEnv            = useCallback((v: Env)            => setEnvState(v),            [])
   const setTz             = useCallback((v: TzMode)         => setTzState(v),             [])
   const setTheme          = useCallback((v: Theme)          => setThemeState(v),          [])
@@ -76,6 +86,29 @@ export function AppProvider({ children }: { children: ReactNode }) {
     return () => clearInterval(id)
   }, [refreshStatus])
 
+  const loadIntervals = useCallback(() => {
+    setIntervalsLoading(true)
+    fetchIntervals(envRef.current, true)
+      .then(setRaw)
+      .catch(console.error)
+      .finally(() => setIntervalsLoading(false))
+  }, [])
+
+  // Reload when env changes
+  useEffect(() => { loadIntervals() }, [env, loadIntervals])
+
+  const patchGroupComment = useCallback((
+    routeGroupId: number,
+    name: string,
+    comment: string | null,
+  ) => {
+    setRaw(prev => prev.map(g =>
+      g.route_group_id === routeGroupId && g.market_group === name
+        ? { ...g, comment }
+        : g
+    ))
+  }, [])
+
   return (
     <Ctx.Provider value={{
       env, setEnv,
@@ -86,6 +119,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       sortKey, setSortKey,
       sortDir, setSortDir,
       status, refreshStatus,
+      raw, intervalsLoading, loadIntervals, patchGroupComment,
     }}>
       {children}
     </Ctx.Provider>

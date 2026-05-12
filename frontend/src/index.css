@@ -17,20 +17,20 @@
 
   --text:         #d4d8e0;
   --text-dim:     #7a8394;
-  --text-xdim:    #454d5a;
+  --text-xdim:    #7c8ba3;
 
   --ok:           #2d6a4f;
   --ok-hi:        #52b788;
-  --ok-bar:       #2d6a4f;
+  --ok-bar:       #439b62;
   --partial:      #7b4f00;
   --partial-hi:   #f4a261;
-  --partial-bar:  #8a5a00;
+  --partial-bar:  #f5862d;
   --conflict:     #6b1a1a;
   --conflict-hi:  #e63946;
-  --conflict-bar: #7d1f1f;
+  --conflict-bar: #bd3333;
   --uptime:       #1a3a5c;
   --uptime-hi:    #4a9eda;
-  --uptime-bar:   #1e4570;
+  --uptime-bar:   #1c269f;
 
   --accent:       #4a9eda;
   --accent-dim:   #1e4570;

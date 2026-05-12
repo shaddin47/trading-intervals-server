@@ -1,31 +1,16 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState } from 'react'
 import type { MarketGroup } from '@/types'
-import { fetchIntervals } from '@/utils/api'
 import { sortMarketGroups } from '@/utils/sort'
 import { useApp } from './useApp'
 
 export function useIntervals() {
-  const { env, conflictFilter, sortKey, sortDir } = useApp()
-  const [raw, setRaw]         = useState<MarketGroup[]>([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError]     = useState<string | null>(null)
+  const { env, raw, intervalsLoading: loading, loadIntervals: load, conflictFilter, sortKey, sortDir } = useApp()
   const [filterMG, setFilterMG] = useState('')
   const [filterIv, setFilterIv] = useState('')
   const [showIgnored, setShowIgnored] = useState(false)
 
-  const load = useCallback(() => {
-    setLoading(true)
-    setError(null)
-    fetchIntervals(env, true)
-      .then(setRaw)
-      .catch(e => setError(String(e)))
-      .finally(() => setLoading(false))
-  }, [env])
-
-  useEffect(() => { load() }, [load])
-
   const groups = (() => {
-    let list = raw
+    let list: MarketGroup[] = raw
     if (!showIgnored) list = list.filter(g => !g.ignored)
 
     if (filterMG.trim()) {
@@ -58,9 +43,10 @@ export function useIntervals() {
   })()
 
   return {
-    groups, loading, error, load,
+    groups, loading, load,
     filterMG, setFilterMG,
     filterIv, setFilterIv,
     showIgnored, setShowIgnored,
+    env,
   }
 }

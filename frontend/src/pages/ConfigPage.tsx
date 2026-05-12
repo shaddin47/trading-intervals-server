@@ -9,7 +9,7 @@ interface SaveState {
 }
 
 export function ConfigPage() {
-  const { env } = useApp()
+  const { env, patchGroupComment } = useApp()
   const [rows, setRows]         = useState<MarketGroupConfig[]>([])
   const [loading, setLoading]   = useState(true)
   const [saveState, setSaveState] = useState<SaveState | null>(null)
@@ -37,6 +37,10 @@ export function ConfigPage() {
       setRows(prev => prev.map(r =>
         r.route_group_id === row.route_group_id && r.name === row.name ? updated : r
       ))
+      // Propagate comment changes to the Gantt groups cache immediately
+      if (field === 'comment') {
+        patchGroupComment(row.route_group_id, row.name, value as string | null)
+      }
       setSaveState({ key, status: 'saved' })
       setTimeout(() => setSaveState(null), 2000)
     } catch {

@@ -7,7 +7,7 @@ import { useApp } from '@/hooks/useApp'
 export function GanttPage() {
   const { tz, scrollAnchor } = useApp()
   const {
-    groups, loading, error, load,
+    groups, loading, load,
     filterMG, setFilterMG,
     filterIv, setFilterIv,
     showIgnored, setShowIgnored,
@@ -22,17 +22,12 @@ export function GanttPage() {
         showIgnored={showIgnored} setShowIgnored={setShowIgnored}
       />
       <div className="main-area">
-        {error
-          ? <div className="state-msg" style={{ color: 'var(--conflict-hi)' }}>
-              Error: {error}
-            </div>
-          : <GanttChart
-              groups={groups}
-              tz={tz}
-              loading={loading}
-              scrollAnchor={scrollAnchor}
-            />
-        }
+        <GanttChart
+          groups={groups}
+          tz={tz}
+          loading={loading}
+          scrollAnchor={scrollAnchor}
+        />
       </div>
     </>
   )
