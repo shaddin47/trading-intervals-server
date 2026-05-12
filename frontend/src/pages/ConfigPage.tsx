@@ -62,6 +62,7 @@ export function ConfigPage() {
     if (!confirm(`Remove override for "${row.name}"? The group will revert to its default DB name.`)) return
     try {
       await deleteConfig(env, row.route_group_id, row.name)
+      setDeferredWarning(true)
       setRows(prev => prev.filter(r =>
         !(r.route_group_id === row.route_group_id && r.name === row.name)
       ))
@@ -84,6 +85,7 @@ export function ConfigPage() {
     }
     try {
       const created = await upsertConfig(cfg)
+      setDeferredWarning(true)
       setRows(prev => [...prev, created])
       setNewRow(null)
     } catch (e) {
@@ -103,7 +105,7 @@ export function ConfigPage() {
     <div className="config-page">
       {deferredWarning && (
         <div className="deferred-warning">
-          <span>⚠ Task aliases, exchange keys or viable route changes will be applied on the next data refresh.</span>
+          <span>⚠ Some changes (task aliases, exchange keys, added/removed rows) will take effect on the next data refresh.</span>
           <button onClick={() => setDeferredWarning(false)}>✕</button>
         </div>
       )}
