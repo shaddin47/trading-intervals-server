@@ -101,31 +101,35 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
   const patchGroupComment = useCallback((
     routeGroupId: number,
-    _name: string,
+    name: string,
     comment: string | null,
   ) => {
     setRaw(prev => prev.map(g =>
-      g.route_group_id === routeGroupId ? { ...g, comment } : g
+      g.route_group_id === routeGroupId && g.market_group === name
+        ? { ...g, comment }
+        : g
     ))
   }, [])
 
   const patchGroupIgnored = useCallback((
     routeGroupId: number,
-    _name: string,
+    name: string,
     ignored: boolean,
   ) => {
     setRaw(prev => prev.map(g =>
-      g.route_group_id === routeGroupId ? { ...g, ignored } : g
+      g.route_group_id === routeGroupId && g.market_group === name
+        ? { ...g, ignored }
+        : g
     ))
   }, [])
 
   const patchGroupName = useCallback((
     routeGroupId: number,
-    _oldName: string,
+    oldName: string,
     newName: string,
   ) => {
     setRaw(prev => prev.map(g =>
-      g.route_group_id === routeGroupId
+      g.route_group_id === routeGroupId && g.market_group === oldName
         ? { ...g, market_group: newName }
         : g
     ))
