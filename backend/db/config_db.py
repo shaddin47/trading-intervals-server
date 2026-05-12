@@ -129,21 +129,41 @@ def upsert_override(
         )
 
 
-def patch_override(env: str, route_group_id: int, name: str, **kwargs) -> None:
+def rename_override(env: str, route_group_id: int, old_name: str, new_name: str) -> None:
+    """
+    Rename a config row. Since `name` is part of the PK we use an atomic
+    UPDATE — SQLite allows updating PK columns directly.
+    """
+    with _conn() as con:
+        con.execute(
+            "UPDATE market_group_config SET name=? "
+            "WHERE env=? AND route_group_id=? AND name=?",
+            (new_name, env, route_group_id, old_name),
+        )
+
+
+def patch_override(env: str, route_group_id: int, name: str, new_name: Optional[str] = None, **kwargs) -> None:
     """
     Partial update — only fields present in kwargs are written.
     Valid fields: task_name, exchange_keys_csv,
                   exchange_keys_from_viable_routes, ignore, comment.
+    Pass new_name to rename the row (name is part of the PK).
     """
+    if new_name and new_name != name:
+        rename_override(env, route_group_id, name, new_name)
+        name = new_name
+
     allowed = {
         "task_name", "exchange_keys_csv",
         "exchange_keys_from_viable_routes", "ignore", "comment",
     }
-    updates = {k: v for k, v in kwargs.items() if k in allowed and v is not None}
+    # Keep None values — they write NULL to clear a field.
+    # Only exclude keys not in the allowed set.
+    updates = {k: v for k, v in kwargs.items() if k in allowed}
     if not updates:
         return
     for bool_col in ("ignore", "exchange_keys_from_viable_routes"):
-        if bool_col in updates:
+        if bool_col in updates and updates[bool_col] is not None:
             updates[bool_col] = int(updates[bool_col])
     cols = ", ".join(f"{k}=?" for k in updates)
     vals = list(updates.values()) + [env, route_group_id, name]

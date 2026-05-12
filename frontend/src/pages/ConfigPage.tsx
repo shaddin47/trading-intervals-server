@@ -9,10 +9,11 @@ interface SaveState {
 }
 
 export function ConfigPage() {
-  const { env, patchGroupComment } = useApp()
+  const { env, patchGroupComment, patchGroupIgnored, patchGroupName } = useApp()
   const [rows, setRows]         = useState<MarketGroupConfig[]>([])
   const [loading, setLoading]   = useState(true)
   const [saveState, setSaveState] = useState<SaveState | null>(null)
+  const [deferredWarning, setDeferredWarning] = useState(false)
   const [newRow, setNewRow]     = useState<Partial<MarketGroupConfig> | null>(null)
 
   const load = useCallback(() => {
@@ -37,9 +38,18 @@ export function ConfigPage() {
       setRows(prev => prev.map(r =>
         r.route_group_id === row.route_group_id && r.name === row.name ? updated : r
       ))
-      // Propagate comment changes to the Gantt groups cache immediately
+      // Propagate changes to the Gantt groups cache immediately
       if (field === 'comment') {
         patchGroupComment(row.route_group_id, row.name, value as string | null)
+      }
+      if (field === 'ignore') {
+        patchGroupIgnored(row.route_group_id, row.name, value as boolean)
+      }
+      if (field === 'name') {
+        patchGroupName(row.route_group_id, row.name, value as string)
+      }
+      if (['task_name', 'exchange_keys_csv', 'exchange_keys_from_viable_routes'].includes(field)) {
+        setDeferredWarning(true)
       }
       setSaveState({ key, status: 'saved' })
       setTimeout(() => setSaveState(null), 2000)
@@ -91,6 +101,12 @@ export function ConfigPage() {
 
   return (
     <div className="config-page">
+      {deferredWarning && (
+        <div className="deferred-warning">
+          <span>⚠ Task aliases, exchange keys or viable route changes will be applied on the next data refresh.</span>
+          <button onClick={() => setDeferredWarning(false)}>✕</button>
+        </div>
+      )}
       <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 16 }}>
         <h2 style={{ margin: 0 }}>Market Group Config — {env}</h2>
         <button

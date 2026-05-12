@@ -118,6 +118,7 @@ class MarketGroupUpsertIn(BaseModel):
 
 
 class MarketGroupPatchIn(BaseModel):
+    name: Optional[str] = None
     task_name: Optional[str] = None
     exchange_keys_csv: Optional[str] = None
     exchange_keys_from_viable_routes: Optional[bool] = None
@@ -309,10 +310,14 @@ def patch_config(
     Partial update — only supplied fields are changed.
     Typical uses: toggling ignore, updating a comment, changing task aliases.
     """
-    updates = {k: v for k, v in body.model_dump().items() if v is not None}
-    config_db.patch_override(env, route_group_id, name, **updates)
+    # exclude_unset=True: only fields the client sent are included.
+    # We keep None values so clearing a field (e.g. task_name="") writes NULL.
+    updates = body.model_dump(exclude_unset=True)
+    new_name = updates.pop("name", None)
+    config_db.patch_override(env, route_group_id, name, new_name=new_name, **updates)
+    effective_name = new_name if new_name else name
     rows = config_db.get_overrides_for_group(env, route_group_id)
-    row = next((r for r in rows if r["name"] == name), None)
+    row = next((r for r in rows if r["name"] == effective_name), None)
     if not row:
         raise HTTPException(404, "Row not found after patch")
     return _row_to_config(row)

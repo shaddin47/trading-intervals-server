@@ -34,6 +34,8 @@ interface AppCtx {
   intervalsLoading:  boolean
   loadIntervals:     () => void
   patchGroupComment: (routeGroupId: number, name: string, comment: string | null) => void
+  patchGroupIgnored:  (routeGroupId: number, name: string, ignored: boolean) => void
+  patchGroupName:     (routeGroupId: number, oldName: string, newName: string) => void
 }
 
 const Ctx = createContext<AppCtx | null>(null)
@@ -99,12 +101,32 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
   const patchGroupComment = useCallback((
     routeGroupId: number,
-    name: string,
+    _name: string,
     comment: string | null,
   ) => {
     setRaw(prev => prev.map(g =>
-      g.route_group_id === routeGroupId && g.market_group === name
-        ? { ...g, comment }
+      g.route_group_id === routeGroupId ? { ...g, comment } : g
+    ))
+  }, [])
+
+  const patchGroupIgnored = useCallback((
+    routeGroupId: number,
+    _name: string,
+    ignored: boolean,
+  ) => {
+    setRaw(prev => prev.map(g =>
+      g.route_group_id === routeGroupId ? { ...g, ignored } : g
+    ))
+  }, [])
+
+  const patchGroupName = useCallback((
+    routeGroupId: number,
+    _oldName: string,
+    newName: string,
+  ) => {
+    setRaw(prev => prev.map(g =>
+      g.route_group_id === routeGroupId
+        ? { ...g, market_group: newName }
         : g
     ))
   }, [])
@@ -119,7 +141,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       sortKey, setSortKey,
       sortDir, setSortDir,
       status, refreshStatus,
-      raw, intervalsLoading, loadIntervals, patchGroupComment,
+      raw, intervalsLoading, loadIntervals, patchGroupComment, patchGroupIgnored, patchGroupName,
     }}>
       {children}
     </Ctx.Provider>
