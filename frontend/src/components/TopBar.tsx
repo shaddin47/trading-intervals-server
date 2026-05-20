@@ -1,4 +1,4 @@
-import type { Env, TzMode, ConflictFilter } from '@/types'
+import type { Env, TzMode, ConflictFilter, Theme } from '@/types'
 import { SORT_OPTIONS } from '@/utils/sort'
 import type { ScrollAnchor } from '@/types'
 import { useApp } from '@/hooks/useApp'
@@ -132,13 +132,18 @@ export function TopBar({ filterMG, setFilterMG, filterIv, setFilterIv, showIgnor
 
       {/* Theme */}
       <div className="ctrl-group">
-        <button
-          className={`icon-btn ${theme === 'light' ? 'active' : ''}`}
-          title="Toggle light/dark theme"
-          onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-        >
-          {theme === 'dark' ? '☀' : '☾'}
-        </button>
+        <div className="seg">
+          {(['dark', 'midnight', 'light', 'warm'] as Theme[]).map(t => (
+            <button
+              key={t}
+              className={theme === t ? 'active' : ''}
+              onClick={() => setTheme(t)}
+              title={t}
+            >
+              {t === 'dark' ? '🌑' : t === 'midnight' ? '🌌' : t === 'light' ? '☀' : '🌅'}
+            </button>
+          ))}
+        </div>
       </div>
     </div>
   )

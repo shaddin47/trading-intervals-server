@@ -82,6 +82,86 @@
   --today-band:   rgba(26,96,160,0.06);
 }
 
+/* ── Midnight theme (deep blue-black) ──────────────────────────────────── */
+[data-theme="midnight"] {
+  --bg:           #070b14;
+  --bg-2:         #0c1120;
+  --bg-3:         #111829;
+  --bg-4:         #192035;
+  --bg-band:      rgba(100,140,255,0.03);
+  --weekend-band: rgba(100,140,255,0.06);
+  --group-alt:    rgba(100,140,255,0.04);
+  --bg-label-alt: #111e38;
+  --border:       #1e2a40;
+  --border-hi:    #2e3f5c;
+  --border-day:   #253550;
+
+  --text:         #c8d4f0;
+  --text-dim:     #6a7fa8;
+  --text-xdim:    #38476a;
+
+  --ok:           #1a4a38;
+  --ok-hi:        #3dd68c;
+  --ok-bar:       #1e5c44;
+  --partial:      #5a3800;
+  --partial-hi:   #ffb347;
+  --partial-bar:  #6b4400;
+  --conflict:     #500a1a;
+  --conflict-hi:  #ff4d6d;
+  --conflict-bar: #6b1020;
+  --uptime:       #0d2a50;
+  --uptime-hi:    #5ba8f5;
+  --uptime-bar:   #0f3260;
+
+  --accent:       #5ba8f5;
+  --accent-dim:   #0d2448;
+  --ignored:      #0c1020;
+  --ignored-text: #38476a;
+
+  --now-line:     #5ba8f5;
+  --today-band:   rgba(91,168,245,0.07);
+}
+
+/* ── Warm light theme (cream / amber) ──────────────────────────────────── */
+[data-theme="warm"] {
+  --bg:           #faf6f0;
+  --bg-2:         #f2ece3;
+  --bg-3:         #e8e0d4;
+  --bg-4:         #ddd4c4;
+  --bg-band:      rgba(0,0,0,0.03);
+  --weekend-band: rgba(0,0,0,0.05);
+  --group-alt:    rgba(0,0,0,0.03);
+  --bg-label-alt: #ece4d8;
+  --border:       #d0c4b0;
+  --border-hi:    #b8a890;
+  --border-day:   #b0a088;
+
+  --text:         #2a1f10;
+  --text-dim:     #6b5440;
+  --text-xdim:    #a08868;
+
+  --ok:           #d4eddc;
+  --ok-hi:        #2a7a3a;
+  --ok-bar:       #3a9450;
+  --partial:      #fde8c8;
+  --partial-hi:   #b05800;
+  --partial-bar:  #c86800;
+  --conflict:     #fdd8d4;
+  --conflict-hi:  #b01a20;
+  --conflict-bar: #c82028;
+  --uptime:       #d4e8f8;
+  --uptime-hi:    #1a5898;
+  --uptime-bar:   #2870b8;
+
+  --accent:       #b06000;
+  --accent-dim:   #f0dfc0;
+  --ignored:      #ede8e0;
+  --ignored-text: #a09080;
+
+  --now-line:     #b06000;
+  --today-band:   rgba(176,96,0,0.07);
+}
+
 /* ── Reset ─────────────────────────────────────────────────────────────── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 html, body, #root { height: 100%; }

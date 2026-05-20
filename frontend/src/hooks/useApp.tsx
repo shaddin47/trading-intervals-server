@@ -28,6 +28,8 @@ interface AppCtx {
   setSortDir:        (d: SortDir) => void
   status:            StatusInfo[]
   refreshStatus:     () => void
+  configUnlocked:    boolean
+  setConfigUnlocked: (v: boolean) => void
   // Intervals data — lifted here so it persists across page navigation
   // and so ConfigPage can patch comments without a full reload.
   raw:               MarketGroup[]
@@ -51,6 +53,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [sortKey,        setSortKeyState]        = useState<SortKey>(initial.sortKey)
   const [sortDir,        setSortDirState]        = useState<SortDir>(initial.sortDir)
   const [status,         setStatus]              = useState<StatusInfo[]>([])
+  const [configUnlocked, setConfigUnlockedState] = useState<boolean>(initial.configUnlocked)
   const [raw,            setRaw]                 = useState<MarketGroup[]>([])
   const [intervalsLoading, setIntervalsLoading]  = useState(false)
 
@@ -65,10 +68,10 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     const prefs: Prefs = {
-      env, tz, theme, scrollAnchor, conflictFilter, sortKey, sortDir,
+      env, tz, theme, scrollAnchor, conflictFilter, sortKey, sortDir, configUnlocked,
     }
     savePrefs(prefs)
-  }, [env, tz, theme, scrollAnchor, conflictFilter, sortKey, sortDir])
+  }, [env, tz, theme, scrollAnchor, conflictFilter, sortKey, sortDir, configUnlocked])
 
   const setEnv            = useCallback((v: Env)            => setEnvState(v),            [])
   const setTz             = useCallback((v: TzMode)         => setTzState(v),             [])
@@ -77,6 +80,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const setConflictFilter = useCallback((v: ConflictFilter) => setConflictFilterState(v), [])
   const setSortKey        = useCallback((v: SortKey)        => setSortKeyState(v),        [])
   const setSortDir        = useCallback((v: SortDir)        => setSortDirState(v),        [])
+  const setConfigUnlocked = useCallback((v: boolean)        => setConfigUnlockedState(v), [])
 
   const refreshStatus = useCallback(() => {
     fetchStatus().then(setStatus).catch(console.error)
@@ -145,6 +149,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       sortKey, setSortKey,
       sortDir, setSortDir,
       status, refreshStatus,
+      configUnlocked, setConfigUnlocked,
       raw, intervalsLoading, loadIntervals, patchGroupComment, patchGroupIgnored, patchGroupName,
     }}>
       {children}

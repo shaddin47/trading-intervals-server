@@ -14,6 +14,7 @@ export interface Prefs {
   sortKey:        SortKey
   sortDir:        SortDir
   env:            'prod' | 'stage'
+  configUnlocked: boolean
 }
 
 const DEFAULTS: Prefs = {
@@ -24,6 +25,7 @@ const DEFAULTS: Prefs = {
   sortKey:        'name',
   sortDir:        'asc',
   env:            'prod',
+  configUnlocked: false,
 }
 
 const COOKIE_NAME = 'ti_prefs'

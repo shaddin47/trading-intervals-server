@@ -4,7 +4,7 @@ export type Env = 'prod' | 'stage'
 export type TzMode = 'UTC' | 'Chicago' | 'Local'
 export type ConflictFilter = 'all' | 'conflicts' | 'no-conflicts'
 export type ScrollAnchor = 'now' | 'sunday'
-export type Theme = 'dark' | 'light'
+export type Theme = 'dark' | 'light' | 'midnight' | 'warm'
 export type ConflictStatus = 'OK' | 'PARTIAL' | 'CONFLICT'
 export type TaskSource = 'windows' | 'linux'
 

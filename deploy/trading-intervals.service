@@ -1,6 +1,6 @@
 [Unit]
 Description=Trading Intervals Monitor — FastAPI backend
-Documentation=https://github.com/cqginc/trading-intervals
+Documentation=https://git.denver.cqg/GWOPS/trading-intervals-web
 After=network.target network-online.target
 Wants=network-online.target
 
