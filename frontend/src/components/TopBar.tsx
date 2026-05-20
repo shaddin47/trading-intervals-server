@@ -18,6 +18,13 @@ const CONFLICT_OPTIONS: { value: ConflictFilter; label: string }[] = [
   { value: 'no-conflicts', label: 'OK only' },
 ]
 
+const THEME_OPTIONS: { value: Theme; label: string }[] = [
+  { value: 'dark',     label: '🌑 Dark' },
+  { value: 'midnight', label: '🌌 Midnight' },
+  { value: 'light',    label: '☀ Light' },
+  { value: 'warm',     label: '🌅 Warm' },
+]
+
 // Group sort options by their group label for <optgroup>
 const SORT_GROUPS = Array.from(
   SORT_OPTIONS.reduce((acc, o) => {
@@ -130,19 +137,18 @@ export function TopBar({ filterMG, setFilterMG, filterIv, setFilterIv, showIgnor
       </div>
       <div className="divider" />
 
-      {/* Theme */}
+      {/* Theme — dropdown */}
       <div className="ctrl-group">
-        <div className="seg">
-          {(['dark', 'midnight', 'light', 'warm'] as Theme[]).map(t => (
-            <button
-              key={t}
-              className={theme === t ? 'active' : ''}
-              onClick={() => setTheme(t)}
-              title={t}
-            >
-              {t === 'dark' ? '🌑' : t === 'midnight' ? '🌌' : t === 'light' ? '☀' : '🌅'}
-            </button>
-          ))}
+        <span className="ctrl-label">Theme</span>
+        <div className="sort-pill">
+          <select
+            value={theme}
+            onChange={e => setTheme(e.target.value as Theme)}
+          >
+            {THEME_OPTIONS.map(o => (
+              <option key={o.value} value={o.value}>{o.label}</option>
+            ))}
+          </select>
         </div>
       </div>
     </div>
