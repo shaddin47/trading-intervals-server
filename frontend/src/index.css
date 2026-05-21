@@ -162,6 +162,87 @@
   --today-band:   rgba(176,96,0,0.07);
 }
 
+/* ── Dark wash theme (blue-washed muted dark) ───────────────────────────── */
+[data-theme="darkwash"] {
+  --bg: #151516;
+  --bg-2: #14161a;
+  --bg-3: #0a0d12;
+  --bg-4: #0f1114;
+  --bg-band: rgba(100, 140, 255, .03);
+  --weekend-band: rgba(100, 140, 255, .06);
+  --group-alt: rgba(100, 140, 255, .04);
+  --bg-label-alt: #1b2029;
+  --border: #1e2a40;
+  --border-hi: #2e3f5c;
+  --border-day: #253550;
+ 
+  --text: #a5a9b5;
+  --text-dim: #727b8b;
+  --text-xdim: #525869;
+ 
+  --ok: #1a4a38;
+  --ok-hi: #2a9561;
+  --ok-bar: #2c89659e;
+  --partial: #837434;
+  --partial-hi: #ffb347;
+  --partial-bar: #91692591;
+  --conflict: #500a1a;
+  --conflict-hi: #ff4d6d;
+  --conflict-bar: #8d142aa8;
+  --uptime: #0d2a50;
+  --uptime-hi: #5ba8f5;
+  --uptime-bar: #325f9da3;
+ 
+  --accent: #8fb0cf;
+  --accent-dim: #2c3543;
+  --ignored: #0c1020;
+  --ignored-text: #38476a;
+ 
+  --now-line: #6597c9b0;
+  --today-band: rgb(78 161 245 / 1%);
+}
+ 
+/* ── Light wash theme (soft blue-grey washed light) ─────────────────────── */
+[data-theme="lightwash"] {
+  --bg: #f0f2f5;
+  --bg-2: #eff2f5;
+  --bg-3: #dde1e7;
+  --bg-4: #d0d5dc;
+  --bg-band: rgba(0, 0, 0, .03);
+  --weekend-band: rgba(0, 0, 0, .055);
+  --group-alt: rgba(0, 0, 0, .025);
+  --bg-label-alt: #eaecf0;
+  --border: #c8cdd6;
+  --border-hi: #a8b0bc;
+  --border-day: #a0a8b5;
+ 
+  --text: #3f434f;
+  --text-dim: #566179;
+  --text-xdim: #8a94a6;
+
+  --ok: #d4edde;
+  --ok-hi: #1a7a40;
+  --ok-bar: #2a9450b3;
+  --partial: #fdefd4;
+  --partial-hi: #c06000;
+  --partial-bar: #d97010b3;
+  --conflict: #fde0e0;
+  --conflict-hi: #c0202a;
+  --conflict-bar: #d03038ad;
+  --uptime: #daeaf8;
+  --uptime-hi: #1a60a0;
+  --uptime-bar: #2878c0c7;
+ 
+  --accent: #48759f;
+  --accent-dim: #c8ddf0;
+  --ignored: #e8eaed;
+  --ignored-text: #9aa0ae;
+ 
+  --now-line: #11314f;
+  --today-band: rgba(26, 96, 160, .06);
+}
+
+
 /* ── Reset ─────────────────────────────────────────────────────────────── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 html, body, #root { height: 100%; }

@@ -20,8 +20,10 @@ const CONFLICT_OPTIONS: { value: ConflictFilter; label: string }[] = [
 
 const THEME_OPTIONS: { value: Theme; label: string }[] = [
   { value: 'dark',     label: '🌑 Dark' },
+  { value: 'darkwash', label: '🫧 Darkwash' },
   { value: 'midnight', label: '🌌 Midnight' },
   { value: 'light',    label: '☀ Light' },
+  { value: 'lightwash',    label: '🪟 Lightwash' },  
   { value: 'warm',     label: '🌅 Warm' },
 ]
 
