@@ -186,7 +186,7 @@ export function ConfigPage() {
                   </label>
                 </td>
                 <td>
-                  <EditableCell
+                  <MultilineCell
                     value={row.comment ?? ''}
                     placeholder="Tooltip comment…"
                     onCommit={v => handlePatch(row, 'comment', v || null as any)}
@@ -319,6 +319,36 @@ function EditableCell({ value, placeholder, onCommit, saveKey, saveState }: Edit
       />
       {isSaving && <span style={{ color: 'var(--text-xdim)', fontFamily: 'var(--mono)', fontSize: 10 }}>…</span>}
       {isSaved  && <span className="save-indicator">✓</span>}
+    </div>
+  )
+}
+
+function MultilineCell({ value, placeholder, onCommit, saveKey, saveState }: EditableCellProps) {
+  const [local, setLocal] = useState(value)
+  useEffect(() => setLocal(value), [value])
+
+  const isSaving = saveState?.key === saveKey && saveState.status === 'saving'
+  const isSaved  = saveState?.key === saveKey && saveState.status === 'saved'
+
+  return (
+    <div style={{ display: 'flex', alignItems: 'flex-start', gap: 4 }}>
+      <textarea
+        className="editable-cell"
+        value={local}
+        placeholder={placeholder}
+        rows={2}
+        style={{ resize: 'vertical', minHeight: 38 }}
+        onChange={e => setLocal(e.target.value)}
+        onBlur={() => { if (local !== value) onCommit(local) }}
+        onKeyDown={e => {
+          if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault()   // Shift+Enter = newline, plain Enter = commit
+            onCommit(local)
+          }
+        }}
+        disabled={isSaving}
+      />
+      {isSaved && <span className="save-indicator">✓</span>}
     </div>
   )
 }

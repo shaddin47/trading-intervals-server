@@ -94,7 +94,15 @@ export function Tooltip({ tip, tz }: Props) {
       })()}
 
       {data.comment && (
-        <div className="tooltip-comment">💬 {data.comment}</div>
+        <div className="tooltip-comment">
+          💬{' '}
+          {data.comment.split('\n').map((line, i) => (
+            <React.Fragment key={i}>
+              {line}
+              {i < data.comment!.split('\n').length - 1 && <br />}
+            </React.Fragment>
+          ))}
+        </div>
       )}
     </div>
   )

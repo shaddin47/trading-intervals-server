@@ -272,7 +272,7 @@ export function GanttChart({ groups, tz, loading, scrollAnchor }: Props) {
                   className={`gantt-group-label-cell ${isIgnored ? 'is-ignored' : ''}`}
                   style={{
                     width: LABEL_W, flexShrink: 0,
-                    position: 'sticky', left: 0, zIndex: 4,
+                    position: 'sticky', left: 0, zIndex: 30,
                     height: ROW_H, borderBottom: 'none',
                     borderRight: '1px solid var(--border)',
                     background: isIgnored ? 'var(--ignored)' : isEvenGroup ? 'var(--bg-2)' : 'var(--bg-label-alt)',
