@@ -164,6 +164,46 @@ def _derive_uptime_intervals(
 
     return intervals
 
+def _evaluate_uptime_statuses(
+    uptimes: list[UptimeInterval],
+    trading_intervals: list[TradingInterval],
+) -> list[UptimeInterval]:
+    """
+    Set the status on each uptime interval based on how well it covers
+    all trading intervals it overlaps. Worst-case across all overlapping
+    trading intervals:
+      - No overlap with any trading interval → OK (uptime is fine, just not needed)
+      - Overlaps at least one, all fully covered → OK
+      - Overlaps at least one, any partially covered → PARTIAL
+      - (CONFLICT is not assigned here; a non-overlapping uptime is just OK)
+
+    Note: CONFLICT on a trading interval means NO uptime covers it at all —
+    that's evaluated in _evaluate_interval. An uptime that doesn't overlap
+    any trading interval is not itself in conflict.
+    """
+    result = []
+    for u in uptimes:
+        worst = ConflictStatus.OK
+        for ti in trading_intervals:
+            t_from = ti.start_utc
+            t_to   = ti.stop_utc
+            # Does this uptime overlap this trading interval?
+            if u.from_utc < t_to and u.to_utc > t_from:
+                start_late = (u.from_utc - t_from) > _START_TOLERANCE
+                stop_early = (t_to - u.to_utc)     > _STOP_TOLERANCE
+                if start_late or stop_early:
+                    worst = ConflictStatus.PARTIAL
+                    # Can't get worse than PARTIAL per uptime, so break early
+                    break
+                # else OK — don't downgrade
+        result.append(UptimeInterval(
+            from_utc=u.from_utc,
+            to_utc=u.to_utc,
+            start_task=u.start_task,
+            stop_task=u.stop_task,
+            status=worst,
+        ))
+    return result
 
 # ---------------------------------------------------------------------------
 # Interval evaluation
@@ -174,55 +214,32 @@ def _evaluate_interval(
     coverages: list[MessengerCoverage],
     source_map: dict[str, str],
 ) -> EvaluatedInterval:
-    """
-    Evaluate a single trading interval against all available uptime intervals.
-
-    source_map: {computer_name: source} pre-built by compare() — avoids
-    iterating all tasks per interval (O(1) lookup vs O(tasks)).
-
-    interval_to_current_week is NOT called here — trading intervals from
-    the SP are already mapped into the current window by trading_intervals.py.
-    We use the times as-is.
-    """
     t_from = trading.start_utc
     t_to   = trading.stop_utc
 
-    best_status = ConflictStatus.CONFLICT
     best_start_task: Optional[str] = None
     best_stop_task: Optional[str] = None
     best_computer: Optional[str] = None
-    best_source = None
+    worst_coverage = ConflictStatus.OK
 
     for coverage in coverages:
         for uptime in coverage.uptime_intervals:
-            u_from = uptime.from_utc
-            u_to = uptime.to_utc
-
-            # Check overlap: trading interval and uptime interval intersect
-            if t_from < u_to and t_to > u_from:
-                # Overlapping — check if coverage is complete
-                start_late = (u_from - t_from) > _START_TOLERANCE
-                stop_early = (t_to - u_to) > _STOP_TOLERANCE
-
-                if start_late or stop_early:
-                    candidate_status = ConflictStatus.PARTIAL
-                else:
-                    candidate_status = ConflictStatus.OK
-
-                # Prefer OK > PARTIAL > CONFLICT when multiple coverages found
-                if (
-                    best_status == ConflictStatus.CONFLICT
-                    or (best_status == ConflictStatus.PARTIAL and candidate_status == ConflictStatus.OK)
-                ):
-                    best_status = candidate_status
+            if t_from < uptime.to_utc and t_to > uptime.from_utc:
+                if best_computer is None:
                     best_start_task = uptime.start_task
-                    best_stop_task = uptime.stop_task
-                    best_computer = coverage.computer_name
+                    best_stop_task  = uptime.stop_task
+                    best_computer   = coverage.computer_name
+                # Accumulate worst coverage across all overlapping uptimes
+                if uptime.status == ConflictStatus.PARTIAL:
+                    worst_coverage = ConflictStatus.PARTIAL
+
+    status = ConflictStatus.OK if best_computer is not None else ConflictStatus.CONFLICT
 
     return EvaluatedInterval(
         from_utc=t_from,
         to_utc=t_to,
-        status=best_status,
+        status=status,
+        coverage=worst_coverage if status == ConflictStatus.OK else ConflictStatus.CONFLICT,
         start_xbit=trading.start_xbit,
         stop_xbit=trading.stop_xbit,
         all_xbit=trading.all_xbit,
@@ -275,12 +292,14 @@ def compare(
     for task in matching_tasks:
         boxes.setdefault(task.computer_name, []).append(task)
 
-    # Step 3: Derive uptime intervals per box
+    # Step 3: Derive uptime intervals per box, then evaluate their status
     coverages: list[MessengerCoverage] = []
     for computer_name, box_tasks in boxes.items():
         uptime_intervals = _derive_uptime_intervals(
             box_tasks, computer_name, market_group.name
         )
+        # NEW: evaluate uptime status against trading intervals (worst-case)
+        uptime_intervals = _evaluate_uptime_statuses(uptime_intervals, trading_intervals)
         if uptime_intervals:
             coverages.append(
                 MessengerCoverage(

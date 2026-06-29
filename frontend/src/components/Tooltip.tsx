@@ -38,7 +38,9 @@ export function Tooltip({ tip, tz }: Props) {
             </div>
             <div className="tooltip-row">
               <span className="k">Status</span>
-              <span className={`v ${iv.status.toLowerCase()}`}>{iv.status}</span>
+              <span className={`v ${(iv.coverage ?? iv.status).toLowerCase()}`}>
+                {iv.coverage ?? iv.status}
+              </span>
             </div>
             {iv.start_xbit && (
               <div className="tooltip-row">
@@ -68,6 +70,12 @@ export function Tooltip({ tip, tz }: Props) {
               <span className="k">Up to</span>
               <span className="v">{fmt(u.to_utc)}</span>
             </div>
+            {u.status && (
+              <div className="tooltip-row">
+                <span className="k">Coverage</span>
+                <span className={`v ${u.status.toLowerCase()}`}>{u.status}</span>
+              </div>
+            )}
             <hr className="tooltip-sep" />
             <div className="tooltip-row">
               <span className="k">Start</span>

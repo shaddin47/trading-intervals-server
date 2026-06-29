@@ -110,11 +110,18 @@ class UptimeInterval(BaseModel):
     """
     A resolved uptime window for one messenger box, derived by pairing
     consecutive Start/Stop tasks from WeeklyRunTimes.
+
+    status reflects how well this uptime covers its overlapping trading intervals:
+      OK      — fully covers every trading interval it overlaps
+      PARTIAL — covers at least one but with late start or early stop
+      CONFLICT — does not overlap any trading interval
+    Set by comparator.compare() after uptime derivation.
     """
     from_utc: datetime
     to_utc: datetime
     start_task: str
     stop_task: str
+    status: ConflictStatus = ConflictStatus.OK
 
 
 class MessengerCoverage(BaseModel):
@@ -131,6 +138,7 @@ class EvaluatedInterval(BaseModel):
     from_utc: datetime
     to_utc: datetime
     status: ConflictStatus
+    coverage: ConflictStatus = ConflictStatus.OK
     start_xbit: Optional[str] = None
     stop_xbit: Optional[str] = None
     all_xbit: Optional[str] = None

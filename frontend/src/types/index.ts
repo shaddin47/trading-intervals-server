@@ -12,6 +12,7 @@ export interface TradingInterval {
   from_utc: string
   to_utc: string
   status: ConflictStatus
+  coverage: ConflictStatus
   start_xbit: string | null
   stop_xbit: string | null
   all_xbit: string | null
@@ -26,6 +27,7 @@ export interface UptimeInterval {
   to_utc: string
   start_task: string
   stop_task: string
+  status: ConflictStatus
 }
 
 export interface MessengerCoverage {

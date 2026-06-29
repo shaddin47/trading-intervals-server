@@ -52,9 +52,14 @@ export function UptimeBar({ u, computerName, mg, tip, source }: UptimeBarProps) 
   const style = barStyle(parseUtc(u.from_utc), parseUtc(u.to_utc))
   if (!style) return null
 
+  // Use uptime's own status for colouring; fall back to type-uptime (blue) when OK
+  const barClass = (!u.status || u.status === 'OK')
+    ? 'type-uptime'
+    : `status-${u.status}`   // status-PARTIAL (amber) or status-CONFLICT (red)
+
   return (
     <div
-      className="gantt-bar type-uptime"
+      className={`gantt-bar ${barClass}`}
       style={style}
       onMouseEnter={e => tip.show({
         type: 'uptime',

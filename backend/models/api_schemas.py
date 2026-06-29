@@ -33,6 +33,7 @@ class UptimeIntervalOut(BaseModel):
     to_utc: datetime
     start_task: str
     stop_task: str
+    status: str = "OK"
 
     @field_serializer("from_utc", "to_utc")
     def serialize_dt(self, dt: datetime, _info) -> str:

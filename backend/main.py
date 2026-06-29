@@ -65,6 +65,7 @@ class IntervalOut(BaseModel):
     from_utc: str
     to_utc: str
     status: str
+    coverage: str = "OK"
     start_xbit: Optional[str] = None
     stop_xbit: Optional[str] = None
     all_xbit: Optional[str] = None
@@ -79,6 +80,7 @@ class UptimeIntervalOut(BaseModel):
     to_utc: str
     start_task: str
     stop_task: str
+    status: str = "OK"
 
 
 class MessengerCoverageOut(BaseModel):
@@ -163,6 +165,7 @@ def _raw_to_out(raw: dict) -> MarketGroupOut:
         return IntervalOut(
             from_utc=_fmt(i["from_utc"]), to_utc=_fmt(i["to_utc"]),
             status=i["status"],
+            coverage=i.get("coverage", "OK"),
             start_xbit=i.get("start_xbit"), stop_xbit=i.get("stop_xbit"),
             all_xbit=i.get("all_xbit"),
             start_task=i.get("start_task"), stop_task=i.get("stop_task"),
@@ -176,6 +179,7 @@ def _raw_to_out(raw: dict) -> MarketGroupOut:
                 UptimeIntervalOut(
                     from_utc=_fmt(u["from_utc"]), to_utc=_fmt(u["to_utc"]),
                     start_task=u["start_task"], stop_task=u["stop_task"],
+                    status=u.get("status", "OK"),
                 )
                 for u in c.get("uptime_intervals", [])
             ],
