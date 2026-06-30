@@ -30,12 +30,15 @@ export function useIntervals() {
     }
     if (conflictFilter === 'conflicts') {
       list = list.filter(g =>
-        g.trading_intervals.some(iv => iv.status === 'CONFLICT' || iv.status === 'PARTIAL')
+        g.trading_intervals.some(iv => {
+          const effective = iv.coverage ?? iv.status
+          return effective === 'CONFLICT' || effective === 'PARTIAL'
+        })
       )
     } else if (conflictFilter === 'no-conflicts') {
       list = list.filter(g =>
         g.trading_intervals.length === 0 ||
-        g.trading_intervals.every(iv => iv.status === 'OK')
+        g.trading_intervals.every(iv => (iv.coverage ?? iv.status) === 'OK')
       )
     }
 
