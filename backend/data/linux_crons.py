@@ -101,7 +101,7 @@ def _discover_inventory_urls(env: str) -> list[str]:
                 f"{settings.gitlab_url}/{settings.gitlab_project}/-/raw/{settings.gitlab_ref}/{f['path']}"
                 for f in items
                 if f.get("path", "").casefold().startswith(env)
-                and f.get("path", "").casefold().endswith(("l_msg.yml", "l_simmsg.yml"))
+                and f.get("path", "").casefold().endswith(("l_msg.yml", "l_simmsg.yml","l_msg2.yml"))
             ]
         except Exception:
             logger.exception("GitLab API unavailable; using fallback URL list")
@@ -112,10 +112,12 @@ def _discover_inventory_urls(env: str) -> list[str]:
             urls = [
                 f"{settings.gitlab_url}/inventory/gateway/-/raw/master/prod_ch2l_msg.yml",
                 f"{settings.gitlab_url}/inventory/gateway/-/raw/master/prod_ch3l_msg.yml",
+                f"{settings.gitlab_url}/inventory/gateway/-/raw/master/prod_ch3l_msg2.yml",
                 f"{settings.gitlab_url}/inventory/gateway/-/raw/master/prod_ch3l_simmsg.yml",
                 f"{settings.gitlab_url}/inventory/gateway/-/raw/master/prod_ch4l_msg.yml",
                 f"{settings.gitlab_url}/inventory/gateway/-/raw/master/prod_lo2l_msg.yml",
                 f"{settings.gitlab_url}/inventory/gateway/-/raw/master/prod_fr2l_msg.yml",
+                f"{settings.gitlab_url}/inventory/gateway/-/raw/master/prod_sg2l_msg.yml",
             ]
         else:
             urls = [
